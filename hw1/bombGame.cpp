@@ -18,7 +18,7 @@ int combine(vector<EVENT> eventSet, int front_idx, int mid_idx, int end_idx){
     vector< EVENT > leftSet(eventSet.begin()+front_idx, eventSet.begin()+mid_idx+1);
     vector< EVENT > rightSet(eventSet.begin()+mid_idx+1, eventSet.begin()+end_idx+1);
 
-
+    /*
     int i, j;
     for (i=0; i <leftSet.size(); i++){
         cout << "left:" << leftSet[i].eventType << leftSet[i].varA << leftSet[i].varB << leftSet[i].varC << leftSet[i].varD << endl;
@@ -26,7 +26,18 @@ int combine(vector<EVENT> eventSet, int front_idx, int mid_idx, int end_idx){
     for (j=0; j <rightSet.size(); j++){
         cout << "right:" << rightSet[j].eventType << rightSet[j].varA << rightSet[j].varB << rightSet[j].varC << rightSet[j].varD << endl;
     }
+    */
+    
+    for (int i=0; i<rightSet.size(); i++){
+        if (rightSet[i].eventType=="A"){
+            for (int j=0; j<leftSet.size(); j++){
+                if (leftSet[j].eventType=="P"){
+                    cout << "bomb work on " << leftSet[j].varA << leftSet[j].varB << endl;
+                }
+            }
+        }
 
+    }
 
 }
 
