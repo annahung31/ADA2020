@@ -25,6 +25,10 @@ int min(int x, int y){
     }
 }
 
+
+int distance(vector<int> pointA, vector<int> pointB){
+    return (pointA[0] - pointB[0])*(pointA[0] - pointB[0]) + (pointA[1] - pointB[1])*(pointA[1] - pointB[1]);
+}
  
 int directCal(vector< vector<int> > pointSet, long long int n){
     long long int i, j, closestDistance, temp=0;
@@ -32,7 +36,7 @@ int directCal(vector< vector<int> > pointSet, long long int n){
 
     for (i=0; i<pointSet.size(); i++){
         for (j=i+1; j<pointSet.size(); j++){
-            temp = (pointSet[i][0] - pointSet[j][0])*(pointSet[i][0] - pointSet[j][0]) + (pointSet[i][1] - pointSet[j][1])*(pointSet[i][1] - pointSet[j][1]);
+            temp = distance(pointSet[i], pointSet[j]);
             //cout << "temp:" << temp << endl;
             //cout << "closestDistance:" << closestDistance << endl;
             if(temp < closestDistance){
@@ -45,9 +49,7 @@ int directCal(vector< vector<int> > pointSet, long long int n){
     return closestDistance;
 }
 
-int distance(vector<int> pointA, vector<int> pointB){
-    return (pointA[0] - pointB[0])*(pointA[0] - pointB[0]) + (pointA[1] - pointB[1])*(pointA[1] - pointB[1]);
-}
+
 
 int stripPointDistance(vector< vector<int> > stripPointSet, int d){
     int sMin = d;
