@@ -31,7 +31,7 @@ int distance(vector<int> pointA, vector<int> pointB){
 }
  
 int directCal(vector< vector<int> > pointSet, long long int n){
-    long long int i, j, closestDistance, temp=0;
+    long long int i, j, closestDistance=3e18, temp=0;
 
 
     for (i=0; i<pointSet.size(); i++){
@@ -58,6 +58,9 @@ int stripPointDistance(vector< vector<int> > stripPointSet, int d){
         for (int j=i+1; j<stripPointSet.size(); j++){
             if (stripPointSet[j][1]-stripPointSet[i][1]<=d){
                 sMin = min(distance(stripPointSet[j], stripPointSet[i]), sMin);
+            }
+            else{
+                break;
             }
         }
     }
@@ -101,7 +104,8 @@ int closestPair(vector< vector<int> > pointSet, long long int front_idx, long lo
 
 int main(){ 
     
-    long long int n, i, j, value, closestDistance=INT_MAX;
+    long long int n, i, j, value, closestDistance=3e18; //INT_MAX is 10e9, not big enough
+    cin.tie(0), cout.sync_with_stdio(0);
     cin >> n;          
 
     vector<int> a_point;

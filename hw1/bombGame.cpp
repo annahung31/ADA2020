@@ -33,6 +33,8 @@ int combine(vector<EVENT> eventSet, int front_idx, int mid_idx, int end_idx){
     }
 }
 
+//這裡的 time complex 太高了，要想辦法降低。 會真正用到 add()
+
 
 int getDamage(vector<EVENT> eventSet, int front_idx, int end_idx){
     if (front_idx < end_idx){
