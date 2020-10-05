@@ -10,9 +10,25 @@ bool sortcol( const vector<int>& v1,
  return v1[0] < v2[0]; 
 } 
 
+// return a vector set with vector[0] to have smallest y.
+bool sortY( const vector<int>& v1, 
+               const vector<int>& v2 ) { 
+ return v1[1] < v2[1]; 
+} 
+
+int min(int x, int y){
+    if (x > y){
+        return y;
+    }
+    else{
+        return x;
+    }
+}
+
  
-int directCal(vector< vector<int> > pointSet, long long int n, long long int &closestDistance){
-    long long int i, j, temp=0;
+int directCal(vector< vector<int> > pointSet, long long int n){
+    long long int i, j, closestDistance, temp=0;
+
 
     for (i=0; i<pointSet.size(); i++){
         for (j=i+1; j<pointSet.size(); j++){
@@ -25,12 +41,58 @@ int directCal(vector< vector<int> > pointSet, long long int n, long long int &cl
             
         }
     }
+
+    return closestDistance;
 }
 
-int closestPair(vector< vector<int> > pointSet, long long int n, long long int &closestDistance){
-    //if (n<=10){
-    directCal(pointSet, n, closestDistance);
-    //}
+int distance(vector<int> pointA, vector<int> pointB){
+    return (pointA[0] - pointB[0])*(pointA[0] - pointB[0]) + (pointA[1] - pointB[1])*(pointA[1] - pointB[1]);
+}
+
+int stripPointDistance(vector< vector<int> > stripPointSet, int d){
+    int sMin = d;
+
+    for (int i=0; i<stripPointSet.size(); i++){
+        for (int j=i+1; j<stripPointSet.size(); j++){
+            if (stripPointSet[j][1]-stripPointSet[i][1]<=d){
+                sMin = min(distance(stripPointSet[j], stripPointSet[i]), sMin);
+            }
+        }
+    }
+
+    return sMin;
+}
+
+
+int closestPair(vector< vector<int> > pointSet, long long int front_idx, long long int end_idx){
+    if (end_idx - front_idx <=2){
+        int d = directCal(pointSet, end_idx - front_idx+1);
+        return d;
+    }
+    // Divide
+    int mid_idx = (front_idx + end_idx)/2;
+    int dl = closestPair(pointSet, front_idx, mid_idx);
+    int dr = closestPair(pointSet, mid_idx+1, end_idx);
+    int d = min(dl, dr);
+
+    
+    //get strips
+    vector<int> a_stripPoint;
+    a_stripPoint.assign(2, 0);  
+    vector< vector<int> > stripPointSet;
+
+    for (int i=front_idx; i<=end_idx; i++){
+        if (pointSet[i][0] >= pointSet[mid_idx][0]-d or pointSet[i][0] <= pointSet[mid_idx][0]+d){
+            a_stripPoint[0]=pointSet[i][0];
+            a_stripPoint[1]=pointSet[i][1];
+            stripPointSet.push_back(a_stripPoint);
+        }
+    }
+
+    sort(stripPointSet.begin(), stripPointSet.end(), sortY); 
+    int ds = stripPointDistance(stripPointSet, d);
+
+    return min(ds, d);
 }
 
 
@@ -56,7 +118,7 @@ int main(){
 
     //sort the pointSet by x coordinate.
     sort(pointSet.begin(), pointSet.end(), sortcol); 
-    closestPair(pointSet, n, closestDistance);
+    closestDistance = closestPair(pointSet, 0, n-1);
     
     closestDistance = closestDistance * (-1);
     cout << closestDistance << endl;
