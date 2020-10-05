@@ -8,14 +8,40 @@ using namespace std;
 class EVENT{
     public:
         string eventType;
-        int  varA;
-        int  varB;
-        int  varC;
-        int  varD;
+        int  varA=0;
+        int  varB=0;
+        int  varC=0;
+        int  varD=0;
 };
 
+int combine(vector<EVENT> eventSet, int front_idx, int mid_idx, int end_idx){
+    vector< EVENT > leftSet(eventSet.begin()+front_idx, eventSet.begin()+mid_idx+1);
+    vector< EVENT > rightSet(eventSet.begin()+mid_idx+1, eventSet.begin()+end_idx+1);
 
 
+    int i, j;
+    for (i=0; i <leftSet.size(); i++){
+        cout << "left:" << leftSet[i].eventType << leftSet[i].varA << leftSet[i].varB << leftSet[i].varC << leftSet[i].varD << endl;
+    }
+    for (j=0; j <rightSet.size(); j++){
+        cout << "right:" << rightSet[j].eventType << rightSet[j].varA << rightSet[j].varB << rightSet[j].varC << rightSet[j].varD << endl;
+    }
+
+
+}
+
+
+int getDamage(vector<EVENT> eventSet, int front_idx, int end_idx){
+    if (front_idx < end_idx){
+        // Divide
+        int mid_idx = (front_idx + end_idx)/2;
+        getDamage(eventSet, front_idx, mid_idx);
+        getDamage(eventSet, mid_idx+1, end_idx);
+        // conquer
+        combine(eventSet, front_idx, mid_idx, end_idx);
+        
+    }
+}
 
 
 
@@ -27,7 +53,7 @@ int main(){
     EVENT iEvent;
     vector<EVENT> eventSet;
 
-    for (i=0; i<n; i++){
+    for (i=0; i<m; i++){
         cin >> iEventType;
         iEvent.eventType = iEventType;
         if (iEventType == "P"){
@@ -42,11 +68,9 @@ int main(){
             iEvent.varC = varc;
             iEvent.varD = vard;
         }
- 
+        eventSet.push_back(iEvent);
         }
-    
-
-
+    getDamage(eventSet, 0, eventSet.size()-1);
 
     return 0; 
 }
