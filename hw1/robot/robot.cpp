@@ -15,7 +15,7 @@ class MOVE{
 class RESULT{
     public:
         long long int sweetness=0;
-        int nMove=1;
+        int nMove=0;
         vector< MOVE> moves;
 };
 
@@ -46,29 +46,47 @@ RESULT getSweet(vector< vector<long long int> > farm, int n, int m){
     // O(m*n)
     for (i=1; i<n; i++){
         for (j=1; j<m; j++){
-            // cout << i << "," << j << endl;
-
             if (dp[i-1][j] > dp[i][j-1]){
                 dp[i][j] = dp[i-1][j] + farm[i][j];
-                if (i==1 && j==1){
-                    output.moves.push_back(recordMove("Move", i-1, j));
-                }
                 
             }
             else{
                 dp[i][j] = dp[i][j-1] + farm[i][j];
-                if (i==1 && j==1){
-                    output.moves.push_back(recordMove("Move", i, j-1));
-                }
 
             }
-            output.moves.push_back(recordMove("Move", i, j));
-            output.nMove++;
-            
+            // output.moves.push_back(recordMove("Move", i, j));
+            // output.nMove++;
         }
     }
 
 
+
+    i=n - 1; j=m - 1;
+    while (i>=0 && j >=0){
+        if (i==0 && j==0){
+            break;
+        }
+        // cout << "i:" << i << " j:" << j << endl;
+        output.moves.push_back(recordMove("Move", i, j));
+        if (i>0 && j>0){
+            if (dp[i-1][j] > dp[i][j-1]){
+                i--;
+            }
+            else{
+                j--; 
+            }
+        }
+        else if (i==0 && j !=0){
+            j--;
+            }
+        else if (i !=0 && j==0){
+            i--;
+            }
+        
+        
+
+        output.nMove++;
+    }
 
     output.sweetness = dp[n - 1][m - 1];
     
@@ -98,9 +116,9 @@ int main(){
 
 
     output = getSweet(farm, n ,m);
-    cout << output.sweetness   << endl;
-    cout << output.nMove   << endl;
-    for (i=0; i<output.moves.size(); i++){
+    cout << output.sweetness << endl;
+    cout << output.nMove << endl;
+    for (i=output.moves.size()-1; i>=0; i--){
         cout << output.moves[i].moveType << " " << output.moves[i].moveI << " " << output.moves[i].moveJ << endl;
     }
 
