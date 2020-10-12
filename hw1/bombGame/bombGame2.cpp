@@ -55,40 +55,43 @@ void combine(vector<EVENT>& eventSet, long long int st, long long int mid, long 
     }
     sort(ASet.begin(), ASet.end(), sortA);
 
-    cout << "===round===" << endl;
-    cout << "====P===" << endl;
-    for (i=0; i<PSet.size(); i++){
-        cout << "P:" << PSet[i].varA << " " << PSet[i].varB << endl;
-    }
+    // cout << "===round===" << endl;
+    // cout << "====P===" << endl;
+    // for (i=0; i<PSet.size(); i++){
+    //     cout << "P:" << PSet[i].varA << " " << PSet[i].varB << endl;
+    // }
 
 
-    cout << "====A===" << endl;
-    for (i=0; i<ASet.size(); i++){
-        cout << "A:" << ASet[i].varA << " " << ASet[i].varB << " " << ASet[i].varC << " " << ASet[i].varD << endl;
-    }
+    // cout << "====A===" << endl;
+    // for (i=0; i<ASet.size(); i++){
+    //     cout << "A:" << ASet[i].varA << " " << ASet[i].varB << " " << ASet[i].varC << " " << ASet[i].varD << endl;
+    // }
 
     if (ASet.size()==0 or PSet.size()==0){
-        cout << "empty" << endl;
+        // cout << "empty" << endl;
         return;
     }
 
     long long int AID, PID;
     AID = ASet.size()-1;
-    while (AID>=0 && PSet.size()!=0){
-        cout << "===cp:===" << endl;
-        cout << "A: " << ASet[AID].varA << " " << ASet[AID].varB << " " << ASet[AID].varC << " " << ASet[AID].varD << endl;
-        cout << "P: " << PSet.back().varA << " " << PSet.back().varB << endl;
+    while (AID>=0){
+        // cout << "===cp:===" << endl;
+        // cout << "A: " << ASet[AID].varA << " " << ASet[AID].varB << " " << ASet[AID].varC << " " << ASet[AID].varD << endl;
+        // cout << "P: " << PSet.back().varA << " " << PSet.back().varB << endl;
         if (ASet[AID].varC >= PSet.back().varB){
             add(ASet[AID].varA, ASet[AID].varB, ASet[AID].varD);
-            cout << "attack: " << ASet[AID].varA << " " << ASet[AID].varB << " " << ASet[AID].varD << endl;
+            // cout << "attack: " << ASet[AID].varA << " " << ASet[AID].varB << " " << ASet[AID].varD << endl;
             ASet[AID].varE = 1;
             AID--;
         }
         else{
             PID = PSet.back().varE;
-            cout << "failed: get player " << PSet.back().varA << " " << PSet.back().varB << " : " << get(PSet.back().varA) << endl;
+            // cout << "failed: get player " << PSet.back().varA << " " << PSet.back().varB << " : " << get(PSet.back().varA) << endl;
             damage[PID] += get(PSet.back().varA);
             PSet.pop_back();
+            if (PSet.empty()){
+                break;
+            }
         }
 
     }
@@ -97,7 +100,7 @@ void combine(vector<EVENT>& eventSet, long long int st, long long int mid, long 
         PID = PSet.back().varE;
         
         damage[PID] += get(PSet.back().varA);
-        cout << "get player " << PSet.back().varA << " " << PSet.back().varB << " : " << get(PSet.back().varA) << endl;
+        // cout << "get player " << PSet.back().varA << " " << PSet.back().varB << " : " << get(PSet.back().varA) << endl;
         PSet.pop_back();
     }
     
@@ -105,19 +108,13 @@ void combine(vector<EVENT>& eventSet, long long int st, long long int mid, long 
     
     //reset array
     for (i=0; i<ASet.size(); i++){
-        // cout << "reset A:" << tempA[i].eventType << "," << tempA[i].varA << "-" << tempA[i].varB << "flag:" << tempA[i].varE << endl;
+        // cout << "reset A:" << ASet[i].eventType << "," << ASet[i].varA << "-" << ASet[i].varB << " flag:" << ASet[i].varE << endl;
         if (ASet[i].varE ==1){
-            cout << "clean:" << ASet[i].varA << "-" << ASet[i].varB << endl;
+            // cout << "clean:" << ASet[i].varA << "-" << ASet[i].varB << endl;
             add(ASet[i].varA, ASet[i].varB, -1*ASet[i].varD);
         }
-        else{
-            break;
-        }
+
     }
-
-
-
-
 
 }
 
@@ -143,15 +140,15 @@ int main(){
     int vard;
     string iEventType;
     cin >> n >> m;          
-
     EVENT iEvent;
+    
     vector<EVENT> eventSet;
-    vector<EVENT> Pset;
-    vector<EVENT> ASet;
+
     vector<long long int> damage;
     for (i=0; i<m; i++){
         cin >> iEventType;
         if (iEventType == "P"){
+            
             iEvent.eventType = 0;
             cin >> vara >> varb;
             iEvent.varA = vara;
@@ -163,11 +160,13 @@ int main(){
         }
         else{
             cin >> vara >> varb >> varc >> vard;
+            
             iEvent.eventType = 1;
             iEvent.varA = vara;
             iEvent.varB = varb;
             iEvent.varC = varc;
             iEvent.varD = vard;
+            iEvent.varE = 0;
         }
         eventSet.push_back(iEvent);
         }
@@ -185,7 +184,7 @@ int main(){
     
 
     for (j=0;j<nP; j++){
-        cout << damage[j] << endl;
+        cout << damage[j] << "\n";
     }
 
     return 0; 
