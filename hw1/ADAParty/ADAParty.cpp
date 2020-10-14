@@ -68,18 +68,9 @@ void case1(vector<long long int>& candies, vector<long long int>& prefixSum, lon
     vector<long long int> Ml(k, 0), Mr(k, 0);
 
     l=mid-1; r=mid+1;
+    ml = (prefixSum[l-1] + MAX + MIN) % k;
+    Ml[ml] +=1;
     while (l>=st){
-        MAX = max(MAX, candies[l]);
-        MIN = min(MIN, candies[l]);
-        cout << "Current MAX: " << MAX << ", MIN:" << MIN << "\n";
-
-        if (l==0){
-            ml = (0 + MAX + MIN) % k;
-        }
-        else{
-            ml = (prefixSum[l-1] + MAX + MIN) % k;
-        }
-        Ml[ml] +=1;
         
         if (flag==1){
             if (MAX >= candies[r] && candies[r] >= MIN){
@@ -94,12 +85,47 @@ void case1(vector<long long int>& candies, vector<long long int>& prefixSum, lon
                 }
             }
             else{
-                l--;
+
+                if (l>0){
+                    l--;
+                    MAX = max(MAX, candies[l]);
+                    MIN = min(MIN, candies[l]);
+                    // cout << "Current MAX: " << MAX << ", MIN:" << MIN << "\n";
+
+                    if (l==0){
+                        ml = (0 + MAX + MIN) % k;
+                    }
+                    else{
+                        ml = (prefixSum[l-1] + MAX + MIN) % k;
+                    }
+                    Ml[ml] +=1;
+                }
+                else{
+                    break;
+                }
+
             }
         }
 
         else{
-            l--;
+            if (l>0){
+                l--;
+                MAX = max(MAX, candies[l]);
+                MIN = min(MIN, candies[l]);
+                // cout << "Current MAX: " << MAX << ", MIN:" << MIN << "\n";
+
+                if (l==0){
+                    ml = (0 + MAX + MIN) % k;
+                }
+                else{
+                    ml = (prefixSum[l-1] + MAX + MIN) % k;
+                }
+                Ml[ml] +=1;
+            }
+            else{
+                break;
+            }
+
         }
         
     }
