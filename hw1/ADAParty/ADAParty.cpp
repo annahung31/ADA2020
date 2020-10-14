@@ -5,6 +5,10 @@
 #include<algorithm>
 #include <numeric>
 using namespace std;
+ios base::sync with stdio(false); 
+cin.tie(nullptr);
+
+
 
 long long int max(long long int x, long long int y){
     if (x > y){
@@ -238,9 +242,11 @@ void case3(vector<long long int>& candies, vector<long long int>& prefixSum, lon
     ml = (prefixSum[l-1] + MAXl) % k;
     Ml[ml] +=1;
     while (l>=st){
-        
+        cout << "l @" << candies[l] << ", r @ " << candies[r] << "\n";
+        cout << "MAXl: " <<  MAXl << ",MINl: " << MINl << ",Mxr: " << MAXr << ", Mnr: " << MINr << "\n";
         if (flag==1){
             if (MAXl >= MAXr && MINl >= MINr){
+                cout << "success" << "\n";
                 mr = (prefixSum[r]-MINr) % k;
                 Mr[mr] +=1;
                 
@@ -300,6 +306,96 @@ void case3(vector<long long int>& candies, vector<long long int>& prefixSum, lon
     }
 
     for (i=0; i<k; i++){
+        cout << i << " : " << Ml[i] << ", " << Mr[i] << "\n";
+        nPair += Ml[i] * Mr[i];
+    }
+
+    return;
+
+
+
+}
+
+
+
+void case4(vector<long long int>& candies, vector<long long int>& prefixSum, long long int& nPair, long long int& k, long long int st, long long int mid, long long int ed){
+    long long int l, r, i, MAXl, MINl, MAXr, MINr, ml, mr;
+    int flag=1;
+
+    MAXl = max(candies[mid], candies[mid-1]);
+    MINl = min(candies[mid], candies[mid-1]);
+    MAXr = candies[mid+1];
+    MINr = candies[mid+1];
+
+    vector<long long int> Ml(k, 0), Mr(k, 0);
+
+
+    l=mid-1; r=mid+1;
+    ml = (prefixSum[l-1] + MINl) % k;
+    Ml[ml] +=1;
+    while (l>=st){
+        cout << "l @" << candies[l] << ", r @ " << candies[r] << "\n";
+        cout << "MAXl: " <<  MAXl << ",MINl: " << MINl << ",Mxr: " << MAXr << ", Mnr: " << MINr << "\n";
+        if (flag==1){
+            if (MAXl <= MAXr && MINl <= MINr){
+                cout << "success" << "\n";
+                mr = (prefixSum[r]-MAXr) % k;
+                Mr[mr] +=1;
+                
+                if (r <= ed-1){
+                    r++;
+                    MAXr = max(MAXr, candies[r]);
+                    MINr = min(MINr, candies[r]);
+                }
+                else{
+                    flag=0;
+                }
+            }
+            else{
+
+                if (r<ed){
+                    r++;
+                    MAXr = max(MAXr, candies[r]);
+                    MINr = min(MINr, candies[r]);
+                    // cout << "Current MAX: " << MAX << ", MIN:" << MIN << "\n";
+
+
+                    mr = (prefixSum[r] - MAXr) % k;
+                    
+                    Mr[mr] +=1;
+                }
+                else{
+                    break;
+                }
+
+            }
+        }
+
+        else{
+            if (l>0){
+                l--;
+                MAXl = max(MAXl, candies[l]);
+                MINl = min(MINl, candies[l]);
+                // cout << "Current MAX: " << MAX << ", MIN:" << MIN << "\n";
+
+                if (l==0){
+                    ml = (0 + MINl) % k;
+                }
+                else{
+                    ml = (prefixSum[l-1] + MINl) % k;
+                }
+                Ml[ml] +=1;
+            }
+            else{
+                break;
+            }
+
+        }
+        
+    }
+
+    for (i=0; i<k; i++){
+        cout << i << " : " << Ml[i] << ", " << Mr[i] << "\n";
         nPair += Ml[i] * Mr[i];
     }
 
@@ -315,6 +411,7 @@ void combine(vector<long long int>& candies, vector<long long int>& prefixSum, l
     case1(candies, prefixSum, nPair, k, st, mid, ed);
     case2(candies, prefixSum, nPair, k, st, mid, ed);
     case3(candies, prefixSum, nPair, k, st, mid, ed);
+    case4(candies, prefixSum, nPair, k, st, mid, ed);
 }
 
 void getPair(vector<long long int>& candies, vector<long long int>& prefixSum, long long int& nPair, long long int& k, long long int st, long long int ed){
@@ -368,6 +465,6 @@ int main(){
     // }
     getPair(candies, prefixSum, nPair, k, 0, n-1);
     
-    cout << nPair << endl;
+    cout << nPair+n-1 << endl;
     return 0; 
     }
