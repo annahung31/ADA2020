@@ -62,13 +62,14 @@ MOVE recordMove(string moveType, int i, int j){
 
 
 RESULT getSweet(vector< vector<long long int> > farm, int n, int m, int k, long long int c){
-    vector<vector<vector<STEP>>> dp(k+1,  vector<vector<STEP>>(n, vector<STEP>(m)));
+    STEP step;
+    vector<vector<vector<STEP>>> dp(k+1,  vector<vector<STEP>>(n, vector<STEP>(m, step)));
     RESULT output;
     
     vector< MAXSWEET > maxSweet(k+1);
     dp[0][0][0].sweetness = farm[0][0];
     int i, j;
-    long long int d;
+    long long int d=0;
     // init: O(n)
     for (i=1; i<n; i++){
         
@@ -120,16 +121,9 @@ RESULT getSweet(vector< vector<long long int> > farm, int n, int m, int k, long 
 
     // cout << "Max sweetness:" << maxSweet[0].sweetness << " @ "  << maxSweet[0].x << "," << maxSweet[0].y << "\n";
 
-
-
+     
     for (d=1; d<=k; d++){
         
-        // if (farm[0][0] < maxSweet[d-1].sweetness+farm[0][0]-c*d){
-        //     dp[d][0][0] = recordSTEP(maxSweet[d-1].sweetness+farm[0][0]-c*d, "Jump", maxSweet[d-1].x, maxSweet[d-1].y);
-        // }
-        // else{
-        //     dp[d][0][0] = recordSTEP(farm[0][0], "Move", 0, 0);
-        // }
         dp[d][0][0] = recordSTEP(farm[0][0]-c*d, "Move", 0, 0);
 
 
@@ -206,6 +200,12 @@ RESULT getSweet(vector< vector<long long int> > farm, int n, int m, int k, long 
 
 
     i=n - 1; j=m - 1;
+    if (d < k){
+        d = d;
+    }
+    else{
+        d = k;
+    }
     output.sweetness = dp[d][n - 1][m - 1].sweetness;
     int tempi, tempj;
     while (i>=0 && j >=0){
