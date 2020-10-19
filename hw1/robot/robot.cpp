@@ -13,7 +13,7 @@ class MOVE{
 
 class STEP{
     public:
-        long long int sweetness=0;
+        long long int sweetness=(-1)*1e10;
         string moveType;
         int fromX=0;
         int fromY=0;
@@ -30,11 +30,10 @@ class RESULT{
 
 class MAXSWEET{
     public:
-        long long int sweetness=(-1)*1e9;
+        long long int sweetness=(-1)*1e10;
         int x=0;
         int y=0;
 };
-
 
 
 
@@ -48,9 +47,6 @@ STEP recordSTEP(long long int sweetness,string moveType, int fromX, int fromY){
 };
 
 
-
-
-
 MOVE recordMove(string moveType, int i, int j){
     MOVE move;
     move.moveType=moveType;
@@ -60,134 +56,69 @@ MOVE recordMove(string moveType, int i, int j){
 };
 
 
+void updateMAX(vector< MAXSWEET>& maxSweet, vector<vector<vector<STEP>>>& dp, long long int d, int i, int j){
+    // cout << "( " << i-1 << "," << j-1 << ") bigger" << endl;
+    if (maxSweet[d].sweetness <= dp[d][i][j].sweetness){
+        maxSweet[d].sweetness = dp[d][i][j].sweetness;
+        maxSweet[d].x = i;
+        maxSweet[d].y = j;
+        }
+}
+
 
 RESULT getSweet(vector< vector<long long int> > farm, int n, int m, int k, long long int c){
     STEP step;
-    vector<vector<vector<STEP>>> dp(k+1,  vector<vector<STEP>>(n, vector<STEP>(m, step)));
+    vector<vector<vector<STEP>>> dp(k+2,  vector<vector<STEP>>(n+1, vector<STEP>(m+1, step)));
     RESULT output;
     
-    vector< MAXSWEET > maxSweet(k+1);
-    dp[0][0][0].sweetness = farm[0][0];
-    int i, j;
-    long long int d=0;
-    // init: O(n)
-    for (i=1; i<n; i++){
-        
-        dp[0][i][0] = recordSTEP(dp[0][i-1][0].sweetness + farm[i][0], "Move", i-1, 0);
-
-        if (maxSweet[0].sweetness < dp[0][i][0].sweetness){
-            maxSweet[0].sweetness = dp[0][i][0].sweetness;
-            maxSweet[0].x = i;
-            maxSweet[0].y = 0;
-        }
-
-    }
-
-    for (j=1; j<m; j++){
-        dp[0][0][j] = recordSTEP(dp[0][0][j-1].sweetness + farm[0][j], "Move", 0, j-1);
-
-            if (maxSweet[0].sweetness < dp[0][0][j].sweetness){
-                maxSweet[0].sweetness = dp[0][0][j].sweetness;
-                maxSweet[0].x = 0;
-                maxSweet[0].y = j;
-            }
-    
-    
-    }
-
-    // O(m*n)
-    for (i=1; i<n; i++){
-        for (j=1; j<m; j++){
-            if (dp[0][i-1][j].sweetness > dp[0][i][j-1].sweetness){
-                // cout << i << "," << j << " move from " <<  i-1 << "," << j << endl;
-                dp[0][i][j] = recordSTEP(dp[0][i-1][j].sweetness + farm[i][j], "Move", i-1, j);
-            }
-            else{
-                // cout << i << "," << j << " move from " <<  i << "," << j-1 << endl;                
-                dp[0][i][j] = recordSTEP(dp[0][i][j-1].sweetness + farm[i][j], "Move", i, j-1);
-
-            }
-
-            if (maxSweet[0].sweetness < dp[0][i][j].sweetness){
-                maxSweet[0].sweetness = dp[0][i][j].sweetness;
-                maxSweet[0].x = i;
-                maxSweet[0].y = j;
-            }
-
-        }
-    }
+    vector< MAXSWEET> maxSweet(k+2);
+    // cout << "maxSweet size:" << maxSweet.size() << endl;
+    int i, j; long long int d;
 
 
+    for (d=1; d<=k+1; d++){
+        // cout << "=============" << endl;
 
-    // cout << "Max sweetness:" << maxSweet[0].sweetness << " @ "  << maxSweet[0].x << "," << maxSweet[0].y << "\n";
-
-     
-    for (d=1; d<=k; d++){
-        
-        dp[d][0][0] = recordSTEP(farm[0][0]-c*d, "Move", 0, 0);
-
-
-        for (i=1; i<n; i++){
-            // cout << "d:" << d << ", i: " << i << endl;
-            if (dp[d][i-1][0].sweetness + farm[i][0]-c*d < maxSweet[d-1].sweetness+farm[i][0]-c*d){
-                dp[d][i][0] = recordSTEP(maxSweet[d-1].sweetness+farm[i][0]-c*d, "Jump", maxSweet[d-1].x, maxSweet[d-1].y);
-            }
-            else{
-                dp[d][i][0] = recordSTEP(dp[d][i-1][0].sweetness + farm[i][0]-c*d, "Move", i-1, 0);
-            }
-
-            if (maxSweet[d].sweetness < dp[d][i][0].sweetness){
-                maxSweet[d].sweetness = dp[d][i][0].sweetness;
-                maxSweet[d].x = i;
-                maxSweet[d].y = 0;
-            }
-
-        }
-
-        for (j=1; j<m; j++){
-            // cout << "d:" << d << ", j: " << j << endl;
-            if (dp[d][0][j-1].sweetness + farm[0][j]-c*d < maxSweet[d-1].sweetness+farm[0][j]-c*d){
-            
-                dp[d][0][j] = recordSTEP(maxSweet[d-1].sweetness+farm[0][j]-c*d, "Jump", maxSweet[d-1].x, maxSweet[d-1].y);
-            }
-            else{
-                dp[d][0][j] = recordSTEP(dp[d][0][j-1].sweetness + farm[0][j]-c*d, "Move", 0, j-1);
-            }
-
-            if (maxSweet[d].sweetness < dp[d][0][j].sweetness){
-                maxSweet[d].sweetness = dp[d][0][j].sweetness;
-                maxSweet[d].x = 0;
-                maxSweet[d].y = j;
-            }
-
-        }
-
-        for (i=1; i<n; i++){
-            for (j=1; j<m; j++){
-                // cout << "d:" << d << ", i: " << i << ", j: " << j << endl;
-                if (dp[d][i-1][j].sweetness-c*d > dp[d][i][j-1].sweetness-c*d && dp[d][i-1][j].sweetness-c*d > maxSweet[d-1].sweetness-c*d){
-                    
-                    dp[d][i][j] = recordSTEP(dp[d][i-1][j].sweetness + farm[i][j]-c*d, "Move", i-1, j);
-                }
-                else if (dp[d][i][j-1].sweetness-c*d > dp[d][i-1][j].sweetness-c*d && dp[d][i][j-1].sweetness-c*d > maxSweet[d-1].sweetness-c*d){
-                                   
-                    dp[d][i][j] = recordSTEP(dp[d][i][j-1].sweetness + farm[i][j]-c*d, "Move", i, j-1);
-                }
-                else{
-                    dp[d][i][j] = recordSTEP(maxSweet[d-1].sweetness-c*d+farm[i][j], "Jump", maxSweet[d-1].x, maxSweet[d-1].y);
-
-                }
-
-
-                if (maxSweet[d].sweetness < dp[d][i][j].sweetness){
-                    maxSweet[d].sweetness = dp[d][i][j].sweetness;
-                    maxSweet[d].x = i;
-                    maxSweet[d].y = j;
-                }
+        for (i=1; i<n+1; i++){
+            for (j=1; j<m+1; j++){
                 
+
+                if (i==1 && j==1){
+                    if (d==1){
+                        dp[d][1][1] = recordSTEP(farm[0][0], "Move", 0, 0);
+                    }
+                    else{
+                        dp[d][1][1] = recordSTEP(maxSweet[d-1].sweetness+farm[0][0]-c*(d-1), "Jump", maxSweet[d-1].x, maxSweet[d-1].y);
+                    }
+                }
+
+                else{
+                    if (dp[d][i-1][j].sweetness>= dp[d][i][j-1].sweetness && dp[d][i-1][j].sweetness> maxSweet[d-1].sweetness){
+                        // cout << "Move" << "," << i-1-1 << "," << j-1 <<  endl;
+                        dp[d][i][j] = recordSTEP(dp[d][i-1][j].sweetness + farm[i-1][j-1]-c*(d-1), "Move", i-1, j);
+                    }
+                    else if (dp[d][i][j-1].sweetness>= dp[d][i-1][j].sweetness && dp[d][i][j-1].sweetness > maxSweet[d-1].sweetness){
+                        // cout << "Move" << "," << i-1 <<  "," << j-1-1 <<  endl;        
+                        dp[d][i][j] = recordSTEP(dp[d][i][j-1].sweetness + farm[i-1][j-1]-c*(d-1), "Move", i, j-1);
+                    }
+                    else{
+                        // cout << "dd ";            
+                        // cout << "Jump" <<  "," << maxSweet[d-1].x-1 <<  "," << maxSweet[d-1].y-1 << " sw: " <<maxSweet[d-1].sweetness + farm[i-1][j-1] - c*(d-1)<<  endl;
+                        dp[d][i][j] = recordSTEP(maxSweet[d-1].sweetness + farm[i-1][j-1] - c*(d-1), "Jump", maxSweet[d-1].x, maxSweet[d-1].y);
+
+                    }
+                    updateMAX(maxSweet, dp, d, i, j);
+
+                }
+                // printf("%4lld", dp[d][i][j].sweetness);
+                // cout << dp[d][i][j].sweetness << " ";
+                // cout << "d:" << d-1 << ", i: " << i-1 << ", j: " << j-1 << ", dp:" << dp[d][i][j].sweetness << endl;
+
             }
+            // cout << endl;
         }
-        // cout << "maxSweet of " << d << " : " << maxSweet[d].sweetness << " @" << maxSweet[d].x << " , " << maxSweet[d].y << endl;  
+        // cout << endl;
+        // cout << "maxSweet of " << d-1 << " : " << maxSweet[d].sweetness << " @" << maxSweet[d].x-1 << " , " << maxSweet[d].y-1 << endl;  
 
         if (maxSweet[d].sweetness < maxSweet[d-1].sweetness){
             d = d-1;
@@ -197,20 +128,22 @@ RESULT getSweet(vector< vector<long long int> > farm, int n, int m, int k, long 
     }
 
 
+    i=n; j=m;
 
-
-    i=n - 1; j=m - 1;
-    if (d < k){
+    // cout << "d:" << d-1 << endl;
+    // d--;
+    if (d<k+1){
         d = d;
     }
     else{
-        d = k;
+        d--;
     }
-    output.sweetness = dp[d][n - 1][m - 1].sweetness;
+    output.sweetness = dp[d][n][m].sweetness;
+    // cout << "output sw: " << output.sweetness << endl;
     int tempi, tempj;
-    while (i>=0 && j >=0){
+    while (i>=1 && j >=1){
         
-        if (i==0 && j==0){
+        if (i==1 && j==1){
             break;
         }
 
@@ -220,7 +153,7 @@ RESULT getSweet(vector< vector<long long int> > farm, int n, int m, int k, long 
             tempi=i, tempj=j;
             i = dp[d][tempi][tempj].fromX;
             j = dp[d][tempi][tempj].fromY;
-            // cout << "Move from " << i << " , " << j << endl;
+            // cout << "Move from " << i-1 << " , " << j-1 << endl;
         }
         else{
             // cout << "Jump: " << i << " , " << j << endl;
@@ -229,15 +162,14 @@ RESULT getSweet(vector< vector<long long int> > farm, int n, int m, int k, long 
             i = dp[d][tempi][tempj].fromX;
             j = dp[d][tempi][tempj].fromY;
             d--;
-            // cout << "Jump from " << d  << ": " <<  i << " , " << j << endl;
+
+            // cout << "Jump from " << d-1  << ": " <<  i-1 << " , " << j-1 << endl;
         }
         
-
         output.nMove++;
     }
 
-    
-    
+
     return output;
 }
 
@@ -267,7 +199,7 @@ int main(){
     cout << output.sweetness << endl;
     cout << output.nMove << endl;
     for (i=0; i<output.moves.size(); i++){
-        cout << output.moves[i].moveType << " " << output.moves[i].moveI << " " << output.moves[i].moveJ << endl;
+        cout << output.moves[i].moveType << " " << output.moves[i].moveI-1 << " " << output.moves[i].moveJ-1 << endl;
     }
 
 
