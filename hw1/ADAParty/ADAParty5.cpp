@@ -72,13 +72,27 @@ void combine(long long int& nPair, long long int& k, long long int st,
         maxl[l] = max(maxl[l+1], candies[l]);
     }
 
+
     minr[mid+1] = maxr[mid+1] = candies[mid+1];
     for (r = mid+2; r <= ed; r++){
         minr[r] = min(minr[r-1], candies[r]);
         maxr[r] = max(maxr[r-1], candies[r]);
     }
+
+    // for (r=mid+1; r<=ed; r++){
+    //     cout << "[" <<minr[r] << ", "<< maxr[r] << "],  ";
+    // }
+    // cout << endl;
+
+
+    // for (l=mid; l>=st; l--){
+    //     cout << "[" << minl[l] << ", "<< maxl[l] << " ],  ";
+    // }
+    // cout << endl;
+
+
         
-    case 1  max, min |
+    // //case 1  max, min |
     r = mid; 
     for (l = mid; l >= st; l--){
         
@@ -90,7 +104,6 @@ void combine(long long int& nPair, long long int& k, long long int st,
             if (it == clean_count.end()){
                 clean_count.push_back(prefixSum[r+1] % k);
             }
-
             r++;
         }
         nPair += count_array[ (prefixSum[l] + minl[l] + maxl[l]) % k ];
@@ -104,19 +117,19 @@ void combine(long long int& nPair, long long int& k, long long int st,
 
 
 
-    case 2  min | max
+    //case 2  min | max
     mn_r = mid, mx_r = mid + 1;
     // [mx_r, r] & [mid + 1, mn_r]
     for (l = mid; l >= st; l--) {
-        cout << "l:" << l << endl;
+        // cout << "l:" << l << endl;
         // move mx_r
         while (mx_r != ed + 1 && maxl[l] > maxr[mx_r]) {
             
             // max no longer satisfied
             if (mx_r <= mn_r) {
-                cout << "max not satisfied, rm:" << mx_r << endl;
+                // cout << "max not satisfied, rm:" << mx_r << endl;
                 count_array[(prefixSum[mx_r+1] - maxr[mx_r]) % k]--;
-                cout << "count_array:" << count_array[0] << "," << count_array[1] << "," << count_array[2] << endl;
+                // cout << "count_array:" << count_array[0] << "," << count_array[1] << "," << count_array[2] << endl;
 
             }
             mx_r++;
@@ -126,9 +139,9 @@ void combine(long long int& nPair, long long int& k, long long int st,
             // min is satisfied
             mn_r++;
             if (mx_r <= mn_r) {
-                cout << "min satisfied, add:" << mx_r << " : " <<(prefixSum[mn_r+1] - maxr[mn_r]) % k  << endl;
+                // cout << "min satisfied, add:" << mx_r << " : " <<(prefixSum[mn_r+1] - maxr[mn_r]) % k  << endl;
                 count_array[(prefixSum[mn_r+1] - maxr[mn_r]) % k]++;
-                cout << "count_array:" << count_array[0] << "," << count_array[1] << "," << count_array[2] << endl;
+                // cout << "count_array:" << count_array[0] << "," << count_array[1] << "," << count_array[2] << endl;
 
                 //check where to clean
                 vector<int>::iterator it = find(clean_count.begin(), clean_count.end(), (prefixSum[mn_r+1] - maxr[mn_r]) % k);
@@ -137,15 +150,111 @@ void combine(long long int& nPair, long long int& k, long long int st,
                 }
             }
         }
-        cout << "choose: " << (prefixSum[l] + minl[l]) % k << endl;
+        // cout << "choose: " << (prefixSum[l] + minl[l]) % k << endl;
         nPair += count_array[(prefixSum[l] + minl[l]) % k];
-        cout << "nPair:" << nPair << endl;
+        // cout << "nPair:" << nPair << endl;
     }
 
     while (!clean_count.empty()){
         count_array[clean_count.back()] = 0;
         clean_count.pop_back();
     }
+
+
+    //case 4  max | min
+    mn_r = mid + 1, mx_r = mid;
+    // [mx_r, r] & [mid + 1, mn_r]
+    for (l = mid; l >= st; l--) {
+        cout << "l:" << l << endl;
+        // move mn_r
+        while (mn_r != ed + 1 && minl[l] < minr[mn_r]) {
+            
+            // min no longer satisfied
+            if (mn_r <= mx_r) {
+                // cout << "min not satisfied, rm:" << mn_r << endl;
+                count_array[(prefixSum[mn_r+1] - minr[mn_r]) % k]--;
+                // cout << "count_array:" << count_array[0] << "," << count_array[1] << "," << count_array[2] << endl;
+
+            }
+            mn_r++;
+        }
+        // move mx_r
+        while (mx_r != ed && maxr[mx_r + 1] < maxl[l]) {
+            // max is satisfied
+            mx_r++;
+            if (mn_r <= mx_r) {
+                // cout << "max satisfied, add:" << mx_r << " : " << prefixSum[mx_r+1] << "," <<minr[mx_r] << "," << (prefixSum[mx_r+1] - minr[mx_r]) % k  << endl;
+                count_array[(prefixSum[mx_r+1] - minr[mx_r]) % k]++;
+                // cout << "count_array:" << count_array[0] << "," << count_array[1] << "," << count_array[2] << endl;
+
+                //check where to clean
+                vector<int>::iterator it = find(clean_count.begin(), clean_count.end(), (prefixSum[mx_r+1] - minr[mx_r]) % k);
+                if (it == clean_count.end()){
+                    clean_count.push_back((prefixSum[mx_r+1] - minr[mx_r]) % k);
+                }
+            }
+        }
+        // cout << "choose: " << (prefixSum[l] + maxl[l]) % k << endl;
+        nPair += count_array[(prefixSum[l] + maxl[l]) % k];
+        // cout << "nPair:" << nPair << endl;
+    }
+
+    while (!clean_count.empty()){
+        count_array[clean_count.back()] = 0;
+        clean_count.pop_back();
+    }
+
+    
+
+
+
+
+
+
+    //case 3   | max, min
+    // all_r = mid; mx_r = mid; mn_r = mid;
+    // for (l = mid; l >= st; l--){
+    //     cout << "l: " << l << endl;
+
+    //     // cout << minl[l] << "," << maxl[l]  << "," << minr[count_r+1] << "," << maxr[count_r+1] << endl;
+
+    //     while (all_r + 1 <= ed){
+    //         // cout << "all_r: " << all_r+1 << endl;
+    //         count_array[ (prefixSum[all_r+1]-minr[all_r+1]) % k ]++;
+    //         // record which to clean 
+    //         vector<int>::iterator it = find(clean_count.begin(), clean_count.end(), (prefixSum[all_r+1]-minr[all_r+1]) % k);
+    //         if (it == clean_count.end()){
+    //             clean_count.push_back((prefixSum[all_r+1]-minr[all_r+1]) % k);
+    //         }
+    //         all_r++;
+    //     }
+
+    //     while (mx_r+1 <=ed && maxr[mx_r+1] < maxl[l]){
+    //         //max not satisfied
+    //         count_array[ (prefixSum[mx_r+1]-minr[mx_r+1]) % k ]--;
+            
+    //         mx_r++;
+    //     }
+
+    //     while (mn_r+1 <=ed && minr[mn_r+1] > minl[l]){
+    //         //min not satisfied
+    //         count_array[ (prefixSum[mn_r+1]-minr[mn_r+1]) % k  ]--;
+            
+    //         mn_r++;
+    //     }
+
+
+    //     nPair += count_array[ (prefixSum[l]) % k ];
+    //     cout << "nPair:" << nPair << endl;
+    // }
+
+
+    // while (!clean_count.empty()){
+    //     count_array[clean_count.back()] = 0;
+    //     clean_count.pop_back();
+    // }
+
+
 
 
 
