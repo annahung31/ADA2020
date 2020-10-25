@@ -55,7 +55,8 @@ void combine(long long int& nPair, long long int& k, long long int st,
      */
     // cout <<"=======" << "\n";
     // cout << st << "-" << mid << "-" << ed << "\n";
-    int l, r, all_r, mx_r, mn_r;
+    int l, r, it, c, all_r, mx_r, mn_r;
+    it = 0;
     vector <int> clean_count;
 
     minl[mid] = maxl[mid] = candies[mid];
@@ -93,24 +94,32 @@ void combine(long long int& nPair, long long int& k, long long int st,
             
             
             // record which to clean 
-            vector<int>::iterator it = find(clean_count.begin(), clean_count.end(), prefixSum[r+2] % k);
-            if (it == clean_count.end()){
-                clean_count.push_back(prefixSum[r+2] % k);
-            }
+            // vector<int>::iterator it = find(clean_count.begin(), clean_count.end(), prefixSum[r+2] % k);
+            // if (it == clean_count.end()){
+            //     clean_count.push_back(prefixSum[r+2] % k);
+            // }
+            clean_count.push_back(prefixSum[r+2] % k);
+            
             r++;
         }
         nPair += count_array[ (prefixSum[l] + minl[l] + maxl[l]) % k ];
 
     }
 
-
-    while (!clean_count.empty()){
-        if (clean_count.back() >=0){
-            count_array[clean_count.back()] = 0;
+    for (c=it; c < clean_count.size(); c++){
+        if (clean_count[c] >= 0){
+            count_array[clean_count[c]] = 0;
         }
+        it++;
+    }  
+
+    // while (!clean_count.empty()){
+    //     if (clean_count.back() >=0){
+    //         count_array[clean_count.back()] = 0;
+    //     }
         
-        clean_count.pop_back();
-    }
+    //     clean_count.pop_back();
+    // }
     // cout << "====case 1: " << nPair << endl;
 
 
@@ -142,10 +151,12 @@ void combine(long long int& nPair, long long int& k, long long int st,
                 // cout << "count_array:" << count_array[0] << "," << count_array[1] << "," << count_array[2] << endl;
 
                 //check where to clean
-                vector<int>::iterator it = find(clean_count.begin(), clean_count.end(), (prefixSum[mn_r+1] - maxr[mn_r]) % k);
-                if (it == clean_count.end()){
-                    clean_count.push_back((prefixSum[mn_r+1] - maxr[mn_r]) % k);
-                }
+                // vector<int>::iterator it = find(clean_count.begin(), clean_count.end(), (prefixSum[mn_r+1] - maxr[mn_r]) % k);
+                // if (it == clean_count.end()){
+                //     clean_count.push_back((prefixSum[mn_r+1] - maxr[mn_r]) % k);
+                // }
+                clean_count.push_back((prefixSum[mn_r+1] - maxr[mn_r]) % k);
+                
             }
         }
         // cout << "choose: " << (prefixSum[l] + minl[l]) % k << endl;
@@ -153,13 +164,19 @@ void combine(long long int& nPair, long long int& k, long long int st,
         // cout << "nPair:" << nPair << endl;
     }
 
-    while (!clean_count.empty()){
-        if (clean_count.back() >=0){
-            count_array[clean_count.back()] = 0;
-        }
+    // while (!clean_count.empty()){
+    //     if (clean_count.back() >=0){
+    //         count_array[clean_count.back()] = 0;
+    //     }
         
-        clean_count.pop_back();
-    }
+    //     clean_count.pop_back();
+    // }
+    for (c=it; c < clean_count.size(); c++){
+        if (clean_count[c] >= 0){
+            count_array[clean_count[c]] = 0;
+        }
+        it++;
+    }    
     // cout << "====case 2: " << nPair << endl;
 
     // ===================================================================
@@ -190,10 +207,11 @@ void combine(long long int& nPair, long long int& k, long long int st,
                 // cout << "count_array:" << count_array[0] << "," << count_array[1] << "," << count_array[2] << endl;
 
                 //check where to clean
-                vector<int>::iterator it = find(clean_count.begin(), clean_count.end(), (prefixSum[mx_r+1] - minr[mx_r]) % k);
-                if (it == clean_count.end()){
-                    clean_count.push_back((prefixSum[mx_r+1] - minr[mx_r]) % k);
-                }
+                // vector<int>::iterator it = find(clean_count.begin(), clean_count.end(), (prefixSum[mx_r+1] - minr[mx_r]) % k);
+                // if (it == clean_count.end()){
+                //     clean_count.push_back((prefixSum[mx_r+1] - minr[mx_r]) % k);
+                // }
+                clean_count.push_back((prefixSum[mx_r+1] - minr[mx_r]) % k);
             }
         }
         // cout << "choose: " << (prefixSum[l] + maxl[l]) % k << endl;
@@ -201,12 +219,18 @@ void combine(long long int& nPair, long long int& k, long long int st,
         // cout << "nPair:" << nPair << endl;
     }
 
-    while (!clean_count.empty()){
-        if (clean_count.back() >=0){
-            count_array[clean_count.back()] = 0;
+    // while (!clean_count.empty()){
+    //     if (clean_count.back() >=0){
+    //         count_array[clean_count.back()] = 0;
+    //     }
+    //     clean_count.pop_back();
+    // }
+    for (c=it; c < clean_count.size(); c++){
+        if (clean_count[c] >= 0){
+            count_array[clean_count[c]] = 0;
         }
-        clean_count.pop_back();
-    }
+        it++;
+    }  
     // cout << "====case 4: " << nPair << endl;
     
 
@@ -227,11 +251,11 @@ void combine(long long int& nPair, long long int& k, long long int st,
             // cout << "all_r: " << all_r+1 << endl;
             count_array[ (prefixSum[all_r+1] - minr[all_r] -maxr[all_r]) % k ]++;
             // // record which to clean 
-            vector<int>::iterator it = find(clean_count.begin(), clean_count.end(), (prefixSum[all_r+1] - minr[all_r] -maxr[all_r]) % k);
-            if (it == clean_count.end()){
-                clean_count.push_back((prefixSum[all_r+1] - minr[all_r] -maxr[all_r]) % k);
-            }
-
+            // vector<int>::iterator it = find(clean_count.begin(), clean_count.end(), (prefixSum[all_r+1] - minr[all_r] -maxr[all_r]) % k);
+            // if (it == clean_count.end()){
+            //     clean_count.push_back((prefixSum[all_r+1] - minr[all_r] -maxr[all_r]) % k);
+            // }
+            clean_count.push_back((prefixSum[all_r+1] - minr[all_r] -maxr[all_r]) % k);
             
         }
 
@@ -253,13 +277,20 @@ void combine(long long int& nPair, long long int& k, long long int st,
     }
 
 
-    while (clean_count.size() !=0){
-        // cout << "clean: " << clean_count.back() << ", ori:" << count_array[clean_count.back()] << endl;
-        if (clean_count.back() >=0){
-            count_array[clean_count.back()] = 0;
+    // while (clean_count.size() !=0){
+    //     // cout << "clean: " << clean_count.back() << ", ori:" << count_array[clean_count.back()] << endl;
+    //     if (clean_count.back() >=0){
+    //         count_array[clean_count.back()] = 0;
+    //     }
+    //     clean_count.pop_back();
+    // }
+
+    for (c=it; c < clean_count.size(); c++){
+        if (clean_count[c] >= 0){
+            count_array[clean_count[c]] = 0;
         }
-        clean_count.pop_back();
-    }
+        it++;
+    }  
 
     // for (int c = 0; c < k; c++){
     //     count_array[c] = 0;
