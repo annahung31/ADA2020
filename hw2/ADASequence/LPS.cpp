@@ -35,10 +35,6 @@ void backTrace(int i, int j){
 
     if (i > j) return;
     if (i == j) cout << s[i];  //middle
-    if (i + 1 == j && s[i] == s[j]){
-        cout << s[i] << s[j];
-        return;
-    }  
         
     else if (status[i][j] == 0){
         cout << s[i];
@@ -71,6 +67,6 @@ int main(){
 
     solu(0, n-1);
     backTrace(0, n-1);
-
+    cout << "\n length: " <<  subLPS[0][n-1] << endl;
     return 0; 
     }
