@@ -10,21 +10,20 @@ vector<long long int> lps;
 long long int score;
 
 long long int solu(long long int i, long long int j){
-
-    if (i == j) return 1;
+    long long int tempMax;
+    if (i == j) return s[i];
     if (i > j) return 0;
-    // if (i + 1 == j && a[i] == a[j]) return 2;
 
     if (subLPS[i][j] != -1) return subLPS[i][j];
 
-    if (a[i] == a[j]){
-        
-        subLPS[i][j] = solu(i+1, j-1) + 2;
+    if (a[i] == a[j] && solu(i+1, j-1) + s[i] + s[j] > solu(i+1, j) && solu(i+1, j-1) + s[i] + s[j] > solu(i, j-1)){
+        subLPS[i][j] = solu(i+1, j-1) + s[i] + s[j];
         status[i][j] = 0;
-        return subLPS[i][j];
-    }
+        return subLPS[i][j];        
+        }
+    
     else{
-        if (solu(i+1, j) >= solu(i, j-1)){
+        if (solu(i+1, j) > solu(i, j-1)){
             subLPS[i][j] = solu(i+1, j);
             status[i][j] = 1;
             return subLPS[i][j];
@@ -41,19 +40,16 @@ void backTrace(long long int i, long long int j){
 
     if (i > j) return;
     if (i == j){
-        // cout << i+1 << " ";  //middle
         lps.push_back(i);
         score += s[i];
     } 
         
     else if (status[i][j] == 0){
-        // cout << i+1 << " ";
         lps.push_back(i);
         score += s[i];
 
         backTrace(i+1, j-1);
 
-        // cout << j+1 << " ";
         lps.push_back(j);
         score += s[j];
     }
@@ -68,23 +64,23 @@ void backTrace(long long int i, long long int j){
 
 int main(){ 
     
-    long long int n, k, D, i, j, value; 
+    long long int n, k, D, i, j, t, value; 
     score = 0;
     cin >> n >> k >> D;     
 
-    for (i = 0; i <= n; i++){
+    for (i = 0; i < n; i++){
             cin >> value;
             a[i] = value;           
     }
 
-    for (i = 0; i <= n; i++){
+    for (j = 0; j < n; j++){
             cin >> value;
-            c[i] = value;           
+            c[j] = value;           
     }
 
-    for (i = 0; i <= n; i++){
+    for (t = 0; t < n; t++){
             cin >> value;
-            s[i] = value;           
+            s[t] = value;           
     }
 
 
@@ -93,6 +89,9 @@ int main(){
             subLPS[i][j] = -1;
         }
     }       
+
+    
+
 
     solu(0, n-1);
     
