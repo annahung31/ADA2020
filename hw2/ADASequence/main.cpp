@@ -13,7 +13,7 @@ long long int solu(long long int i, long long int j){
 
     if (i == j) return 1;
     if (i > j) return 0;
-    if (i + 1 == j && a[i] == a[j]) return 2;
+    // if (i + 1 == j && a[i] == a[j]) return 2;
 
     if (subLPS[i][j] != -1) return subLPS[i][j];
 
@@ -21,15 +21,18 @@ long long int solu(long long int i, long long int j){
         
         subLPS[i][j] = solu(i+1, j-1) + 2;
         status[i][j] = 0;
+        return subLPS[i][j];
     }
     else{
         if (solu(i+1, j) >= solu(i, j-1)){
             subLPS[i][j] = solu(i+1, j);
             status[i][j] = 1;
+            return subLPS[i][j];
         }
         else{
             subLPS[i][j] = solu(i, j-1);
             status[i][j] = 2;
+            return subLPS[i][j];
         }
     }
 }
