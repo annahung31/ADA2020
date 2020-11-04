@@ -1,71 +1,93 @@
 #include<bits/stdc++.h>
 using namespace std;
-
+#include <algorithm>
 long long int a[201];
 long long int c[201];
 long long int s[201];
-long long int subLPS[201][201];
-long long int status[201][201];
+long long int subLPS[201][201][601];
+long long int status[201][201][601];
 vector<long long int> lps;
+// vector<long long int> changeP;
 long long int score;
+long long int op;
 
-long long int solu(long long int i, long long int j){
-    long long int tempMax;
-    if (i == j) return s[i];
-    if (i > j) return 0;
 
-    if (subLPS[i][j] != -1) return subLPS[i][j];
 
-    if (a[i] == a[j] && solu(i+1, j-1) + s[i] + s[j] > solu(i+1, j) && solu(i+1, j-1) + s[i] + s[j] > solu(i, j-1)){
-        subLPS[i][j] = solu(i+1, j-1) + s[i] + s[j];
-        status[i][j] = 0;
-        return subLPS[i][j];        
-        }
+long long int solu(long long int i, long long int j, long long int m, long long int& k, long long int& D){
+   long long int changeOp, equFree, subLeft, subRight;
     
-    else{
-        if (solu(i+1, j) > solu(i, j-1)){
-            subLPS[i][j] = solu(i+1, j);
-            status[i][j] = 1;
-            return subLPS[i][j];
+    if (i == j && m == s[i]) return 0;
+    if (i == j && m != s[i]) return 1e10;
+    if (i > j) return 1e10;
+
+    if (subLPS[i][j][m] != -1) return subLPS[i][j][m];
+
+    subLeft = solu(i+1, j, m, k, D);
+    subRight = solu(i, j-1, m, k, D);
+
+    if (abs(a[i] - a[j]) <= D){
+        equFree = solu(i+1, j-1, m-s[i]-s[j], k, D);
+
+        subLPS[i][j][m] = min({equFree, subLeft, subRight});
+        if (subLPS[i][j][m] == equFree) status[i][j][m] = 0;
+        else if (subLPS[i][j][m] == subLeft) status[i][j][m] = 1;
+        else status[i][j][m] = 2;
+        
+        if (subLPS[i][j][m] <= k && m > score){
+            score = m;
         }
-        else{
-            subLPS[i][j] = solu(i, j-1);
-            status[i][j] = 2;
-            return subLPS[i][j];
-        }
+        return subLPS[i][j][m];
     }
+    else{
+        changeOp = solu(i+1, j-1, m-s[i]-s[j], k, D)+min({c[i], c[j]});
+
+        subLPS[i][j][m] = min({changeOp, subLeft, subRight});
+        if (subLPS[i][j][m] == changeOp) status[i][j][m] = 3;
+        else if (subLPS[i][j][m] == subLeft) status[i][j][m] = 1;
+        else status[i][j][m] = 2;
+
+
+        if (subLPS[i][j][m] <= k && m > score){
+            score = m;
+        }
+        return subLPS[i][j][m];
+    }
+    
+
 }
 
-void backTrace(long long int i, long long int j){
+void backTrace(long long int i, long long int j, long long int m){
 
     if (i > j) return;
     if (i == j){
         lps.push_back(i);
-        score += s[i];
+        
     } 
         
-    else if (status[i][j] == 0){
+    else if (status[i][j][m] == 0){
         lps.push_back(i);
-        score += s[i];
-
-        backTrace(i+1, j-1);
-
+        backTrace(i+1, j-1, m - s[i] - s[j]);
         lps.push_back(j);
-        score += s[j];
     }
 
-    else if (status[i][j] == 1){
-        backTrace(i+1, j);
-    }
+    else if (status[i][j][m] == 1) backTrace(i+1, j, m);
+    else if (status[i][j][m] == 2) backTrace(i, j-1, m);
     else {
-        backTrace(i, j-1);
+        op += 1;
+        lps.push_back(i);
+        backTrace(i+1, j-1, m - s[i] - s[j]);
+        lps.push_back(j);
+
     }
 }
 
+
+
 int main(){ 
     
-    long long int n, k, D, i, j, t, value; 
+    long long int n, k, D, i, j, t, m, value, sumS; 
     score = 0;
+    sumS = 0;
     cin >> n >> k >> D;     
 
     for (i = 0; i < n; i++){
@@ -80,25 +102,29 @@ int main(){
 
     for (t = 0; t < n; t++){
             cin >> value;
-            s[t] = value;           
+            s[t] = value;         
+            sumS += value;  
     }
 
 
     for (i = 0; i < n; i++){
         for (j = 0; j < n; j++){
-            subLPS[i][j] = -1;
+            for (t = 0; t < sumS; t++){
+                subLPS[i][j][t] = -1;
+            }
+            
         }
     }       
 
+    //loop m 
+    for (m = sumS; m >= 1; m--){
+        solu(0, n-1, m, k, D);
+    }
     
-
-
-    solu(0, n-1);
-    
-    backTrace(0, n-1);
-
+    backTrace(0, n-1, score);
+  
     cout << score << endl;
-    cout << 0 << endl;
+    cout << op << endl;
     cout << lps.size() << endl;
     for (i = 0; i < lps.size(); i++){
         cout << lps[i]+1 << " ";
