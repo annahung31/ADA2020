@@ -3,11 +3,11 @@
 
 using namespace std;
 
-int books[100001];
-int tempbooks[100001];
+long long int books[100001];
+long long int tempbooks[100001];
 
 
-void solu(int i, int j, int& ed, int& insertNum, vector< vector<int>>& output){
+void solu(long long int i, long long int j, long long int& ed, long long int& insertNum, vector< vector<long long int>>& output){
     // cout << "check i:" << i << "," << books[i] << ", j:" << j << "," << books[j] << "\n";
     if (i < ed && j < ed){
         return;
@@ -20,12 +20,6 @@ void solu(int i, int j, int& ed, int& insertNum, vector< vector<int>>& output){
         books[i] = 0;
         return;
     }
-
-    // if (books[i] == 0 && books[j] == 0){
-    //     insertNum += 2;
-    //     output.push_back({i, j, 1});
-    //     solu(j-1, j-2, ed, insertNum, output);
-    // }
 
 
     if (books[i] > books[j]){
@@ -70,8 +64,8 @@ void solu(int i, int j, int& ed, int& insertNum, vector< vector<int>>& output){
 }  
 
 
-void printSeq(vector< vector<int>>& output){
-    int i, j;
+void printSeq(vector< vector<long long int>>& output){
+    long long int i, j;
     for (i = 0; i < output.size(); i++){
         if (output[i][1] == -1){
             cout << output[i][0] << " ";
@@ -90,9 +84,9 @@ void printSeq(vector< vector<int>>& output){
 
 int main(){ 
     
-    int n, flag, i, value, ed, st, insertNum = 0, InsertNumA = 0; 
-    vector< vector<int>> outputA;
-    vector< vector<int>> outputB;
+    long long int n, flag, i, value, ed, st, insertNum = 0, InsertNumA = 0; 
+    vector< vector<long long int>> outputA;
+    vector< vector<long long int>> outputB;
     cin >> n;          
 
 
@@ -116,49 +110,68 @@ int main(){
         if (books[i] != 0) break;
     }
   
-
-
-
-    solu(st, st-1, ed, insertNum, outputA);
-
-
-    InsertNumA = insertNum;
-    insertNum = 0;
-
-    for (i = 1; i <= n; i++){
-            books[i] = tempbooks[i];
-    }
-
-
-
-    //case 2
-    if (books[st-1] != 0){
-        books[st-1]--;
-        outputB.push_back({st-1, -1, 1});
-        solu(st, st-1, ed, insertNum, outputB);
-    }
-    else{
-        // solu(st, st-1, ed, insertNum, outputB);
-        insertNum = InsertNumA;
-
-    }
-
-
-
-    if (InsertNumA > insertNum){
-        cout << insertNum << "\n";
+    if (st == ed){
+        cout << books[st] - 1 << endl;
         if (flag == 1){
-            printSeq(outputB);
-        }
-    }
-    else{
-        cout << InsertNumA << "\n";
-        if (flag == 1){
+
+            outputA.push_back({st, -1, 1});
+            
+            if (st == 1){
+                outputA.push_back({st+1, st, books[st] - 1});
+            }
+            else {
+                outputA.push_back({st-1, st, books[st] - 1});
+            }
+
+            
             printSeq(outputA);
         }
+
+        return 0;
     }
+    else{
+
+        solu(st, st-1, ed, insertNum, outputA);
+
+        InsertNumA = insertNum;
+        insertNum = 0;
+
+        for (i = 1; i <= n; i++){
+                books[i] = tempbooks[i];
+        }
 
 
-    return 0; 
+
+        //case 2
+        if (books[st-1] != 0){
+            books[st-1]--;
+            outputB.push_back({st-1, -1, 1});
+            solu(st, st-1, ed, insertNum, outputB);
+        }
+        else{
+            // solu(st, st-1, ed, insertNum, outputB);
+            insertNum = InsertNumA;
+
+        }
+
+
+
+        if (InsertNumA > insertNum){
+            cout << insertNum << "\n";
+            if (flag == 1){
+                printSeq(outputB);
+            }
+        }
+        else{
+            cout << InsertNumA << "\n";
+            if (flag == 1){
+                printSeq(outputA);
+            }
+        }
+
+
+        return 0; 
+
+    }
     }
 
