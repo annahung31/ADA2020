@@ -19,8 +19,9 @@ singleton : O(1)
 
 ## Reference
 * DFS:  http://alrightchiu.github.io/SecondRound/graph-depth-first-searchdfsshen-du-you-xian-sou-xun.html
-* Max Heap: https://www.techiedelight.com/min-heap-max-heap-implementation-c/
+* Max/Min Heap: https://www.techiedelight.com/min-heap-max-heap-implementation-c/
 
 * Disjoint set: 
     - http://web.ntnu.edu.tw/~algo/Set.html#7  
     - https://www.geeksforgeeks.org/disjoint-set-data-structures/ 
+    - Union By Rank and Path Compression: https://www.geeksforgeeks.org/union-find-algorithm-set-2-union-by-rank/  
