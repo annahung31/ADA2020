@@ -1,7 +1,5 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <stdexcept>
+
+#include <bits/stdc++.h> 
 using namespace std;
  
 // Data structure for Min Heap
