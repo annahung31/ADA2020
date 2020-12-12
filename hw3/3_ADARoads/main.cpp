@@ -123,28 +123,70 @@ struct DisjointSets{
 long long Graph::solve(long long S, long long T){ 
     // Sort edges in increasing order on basis of cost 
     sort(edges.begin(), edges.end()); 
-  
     DisjointSets ds(V);  // disjoint sets 
     GraphD g(V);         // dijkstra Graph
   
+    
+
+    vector< pair<long long, iPair> > waited_list;
     // Iterate through all sorted edges 
     vector< pair<long long, iPair> >::iterator it; 
     for (it=edges.begin(); it!=edges.end(); it++){ 
         long long u = it->second.first; 
         long long v = it->second.second; 
-  
+        
+
+
+        if (!waited_list.empty()){
+            // cout << waited_list.back().first << "\n";
+            // cout << waited_list.back().second.first << "\n";
+            // cout << waited_list.back().second.second << "\n";
+            if (waited_list.back().first != it->first){
+                
+                while (!waited_list.empty()){
+                    
+                    long long wu = waited_list.back().second.first;
+                    long long wv = waited_list.back().second.second;
+                    long long ww = waited_list.back().first;
+                    ds.merge(ds.find(wu), ds.find(wv)); 
+                    g.addEdge(wu-1, wv-1, ww); 
+                    // g.addEdge(wv-1, wu-1, ww); 
+                    // cout << "add " << wu << "," << wv << "," << " into graph" << "\n";
+                    waited_list.pop_back();
+                }
+            }
+        }
+
+
         long long set_u = ds.find(u); 
         long long set_v = ds.find(v); 
-  
+        // cout << u << "," << set_u << " - " << v << ", " << set_v << "\n";
         // check cycle
         if (set_u != set_v){ 
-            ds.merge(set_u, set_v); 
-
+            // cout << "no cycle: " << u << " - " << v << "\n";
+            // ds.merge(set_u, set_v); 
+            
+            // cout << "push " << it->first << "," << u << "," <<  v << " into waited list\n";
+            waited_list.push_back({it->first, {u, v}});
             // Add edge into dijkstra graph
-            g.addEdge(u-1, v-1, it->first); 
-            g.addEdge(v-1, u-1, it->first); 
-        } 
+
+            // g.addEdge(u-1, v-1, it->first); 
+            // g.addEdge(v-1, u-1, it->first); 
+        }
+ 
     } 
+
+    while (!waited_list.empty()){
+        long long wu = waited_list.back().second.first;
+        long long wv = waited_list.back().second.second;
+        long long ww = waited_list.back().first;
+        
+        g.addEdge(wu-1, wv-1, ww); 
+        // ds.merge(ds.find(wu), ds.find(wv));
+        // g.addEdge(wv-1, wu-1, ww); 
+        waited_list.pop_back();
+        // cout << "add " << wu << "," << wv << "," << " into graph" << "\n";
+    }
 
 	// dijkstra
     long long ans = g.shortestPath(S-1, T-1); 
