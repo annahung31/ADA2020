@@ -1,11 +1,12 @@
-// C++ program to find the longest 
-// path in the DAG 
-
 #include <bits/stdc++.h>
 using namespace std;
 
+long long ans[1000000];  
+long long output[1000000];
+// long long changeTime[1000000];
+typedef pair<long long, long long> iPair; 
 
-long long ans[1000000][1000000];   // ans[type][group]
+
 
 struct Group {  
     string s;  
@@ -15,23 +16,163 @@ struct Group {
 };
 
 
-
-void printGroup(struct Group g) {
-    printf("g(%d, %d, %d)\n", g.c, g.t, g.k);
-	if (g.s == "back")
-		cout << "back" << "\n";
-}
-
-
 void solve(Group groups[], long long N, long long Q){
-	
-	for (long long i=1; i <= Q; i++){
-		printGroup(groups[i]);
-		// cout << i << "," << groups[i].t << "," << groups[i].c << "\n";
-		ans[groups[i].t][i] = ans[groups[i].t][i-1] + groups[i].c;
-		
-	}
+    deque < iPair > line;
+
+    long long i, j, idx, group_type, group_size, added_num;
+    for (i=1; i <= Q; i++){
+        /*
+        groups[i].s = [front/back]
+        groups[i].c = number of new people
+        groups[i].t = type
+        groups[i].k = number to persuade
+        */
+        added_num = 0;
+        if (groups[i].s == "back"){
+            if (!line.empty()){
+                idx = line.size() - 1;
+                while (groups[i].k != 0 && idx >= 0){
+
+                    group_size = line[idx].first;
+                    group_type = line[idx].second; 
+                    // cout << "check" << idx << " :(" << group_size << "," <<  group_type << ")" << "\n";
+
+                    // look back to the neighors
+                    if (group_type != groups[i].t){  // if not the same type,  
+                        if (group_size <=  groups[i].k){  
+                            // cout << "eat them all ";
+
+                            // change type num
+                            ans[group_type] -= group_size;
+                            // cout << group_type << ": " << ans[group_type] << "\n";
+                            // update line & k
+                            line.pop_back();
+                            groups[i].k -= group_size;
+                            added_num += group_size;
+                            idx--;
+                            // cout << ", still need " << groups[i].k << "\n";
+                            
+                        }
+                        else{
+                            // cout << "eat partial " << "\n";
+                            line[idx].first -= groups[i].k;
+                            ans[group_type] -= groups[i].k;
+                            // cout << group_type << ": " << ans[group_type] << "\n";
+                            // cout << "type " << group_type << "left " << line[idx].first << "\n";
+                            added_num += groups[i].k;
+                            groups[i].k = 0;
+                            break;
+                        }
+                    }
+                    else{
+                        // cout << "same type" << "\n";                        
+                        added_num += group_size;
+                        line.pop_back();
+                        ans[groups[i].t] -= group_size;
+
+                        idx--;
+                    }                
+                }
+
+                // cout << "add final " << "\n";
+                line.push_back({groups[i].c + added_num, groups[i].t});   
+                ans[groups[i].t] = ans[groups[i].t] + groups[i].c + added_num;
+                // cout << groups[i].t << ": " << ans[groups[i].t] << "\n";
+            }
+
+            else{
+                // cout << "begin:" << "\n";
+                line.push_back({groups[i].c, groups[i].t}); 
+                ans[groups[i].t] += groups[i].c;
+                // cout << groups[i].t << ": " << ans[groups[i].t] << "\n";
+            }
+                      
+       }
+
+
+        else{
+            if (!line.empty()){
+                idx = 0;
+                while (groups[i].k != 0 && idx < line.size()){
+
+                    group_size = line[idx].first;
+                    group_type = line[idx].second; 
+                    // cout << "check" << idx << " :(" << group_size << "," <<  group_type << ")" << "\n";
+
+                    // look back to the neighors
+                    if (group_type != groups[i].t){  // if not the same type,  
+                        if (group_size <=  groups[i].k){  
+                            // cout << "eat them all ";
+
+                            // change type num
+                            ans[group_type] -= group_size;
+                            // cout << group_type << ": " << ans[group_type] << "\n";
+                            // update line & k
+                            line.pop_front();
+                            groups[i].k -= group_size;
+                            added_num += group_size;
+                            // cout << ", still need " << groups[i].k << "\n";
+                            
+                        }
+                        else{
+                            // cout << "eat partial " << "\n";
+                            line[idx].first -= groups[i].k;
+                            ans[group_type] -= groups[i].k;
+                            // cout << group_type << ": " << ans[group_type] << "\n";
+                            // cout << "type " << group_type << "left " << line[idx].first << "\n";
+                            added_num += groups[i].k;
+                            groups[i].k = 0;
+                            break;
+                        }
+                    }
+                    else{
+                        // cout << "same type" << "\n";                        
+                        added_num += group_size;
+                        line.pop_front();
+                        ans[groups[i].t] -= group_size;
+                    }                
+                }
+
+                // cout << "add final " << "\n";
+                line.push_front({groups[i].c + added_num, groups[i].t});   
+                ans[groups[i].t] = ans[groups[i].t] + groups[i].c + added_num;
+                // cout << groups[i].t << ": " << ans[groups[i].t] << "\n";
+            }
+
+            else{
+                // cout << "begin:" << "\n";
+                line.push_front({groups[i].c, groups[i].t}); 
+                ans[groups[i].t] += groups[i].c;
+                // cout << groups[i].t << ": " << ans[groups[i].t] << "\n";
+            }
+                 
+        }
+
+
+        for (j = 1; j <= N; j++){
+            output[j] += ans[j];   
+        }
+
+
+        // cout << i << ": ";
+        // for (j = 0; j< line.size(); j++){
+        //     cout << "( " << line[j].first << "," << line[j].second << " )";
+        // }
+        // cout << "\n";
+
+        // for (j = 1; j <= N; j++){
+            
+        //     cout << ans[j] << " ";
+            
+        // }
+        // cout << "\n";
+
+    }
+
+
+
 }
+
 
 
 int main() { 
@@ -53,25 +194,18 @@ int main() {
 		groups[i] = g;
 	}
 
-	for (i = 0; i <= N; i++){
-		for (j = 0; j <= Q; j++){
-			ans[i][j] = 0;
-		}
+	for (i = 0; i <= N+2; i++){
+			ans[i] = 0;
+            output[i] = 0;
+            // changeTime[i] = 0;
 	}
 
 	solve(groups, N, Q);
 
-	// count output
-	for (i=1; i<=N; i++){
-		long long popularity =0;
-		for (j = 1; j <= Q; j++){
-			popularity += ans[i][j];
-		}
-		cout << popularity << " ";
-	}
-
-	cout << "\n";
-
+    for (i = 1; i <= N; i++){
+        cout << output[i] << " ";
+    }
+    cout << "\n";
 
     return 0; 
 } 
