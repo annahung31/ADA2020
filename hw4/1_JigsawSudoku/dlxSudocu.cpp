@@ -29,7 +29,6 @@ int block(int i, int j){
 
 
 vector<int> cal_id(int i, int j, int num){
-    // cout << i << ", " << j << ", " << num << ": ";
     int id_a, id_b, id_c, id_d;
     id_a = BOARDWIDTH * (i) + j;
     id_b = A_RANGE + BOARDWIDTH * (i) + num - 1;
@@ -39,10 +38,6 @@ vector<int> cal_id(int i, int j, int num){
                                    
     vector<int> dlxID{id_a+1, id_b+1, id_c+1, id_d+1};  // +1 because DLX set start from 1
 
-    // for (int i=0; i < dlxID.size(); i++){
-    //     cout << dlxID[i] << " ";
-    // }
-    // cout << "\n";
 
     return dlxID;
 
@@ -100,7 +95,6 @@ int main(){
     for (int i =0; i < BOARDWIDTH; i++){
         for (int j =0; j < BOARDWIDTH; j++){
             for (int k=1; k <= RANGE; k++){
-                cout << set_id  << ": " << i << ", " << j << ", " << k << "\n";
                 dlxID = cal_id(i,j,k);
                 moves[set_id][0] = i;
                 moves[set_id][1] = j;
@@ -114,11 +108,6 @@ int main(){
 
     vector<int> ans;
     ans = Solver();
-    cout << ans.size() << "\n";
-    for (int i=0; i < ans.size(); i++){
-        cout << ans[i] << " ";
-    }
-    cout << "\n";
     print_board(ans);
 
 
