@@ -1,3 +1,12 @@
+
+## Introduction
+
+- `exampleForHelper.cpp`: show the way to use `helper.h`, which is given by the TA.
+- `dlxSudoku.cpp`: using DLX and helper.h to solve a general Sudoku. (Empty board in the beginning, no need for input.)
+- `main.cpp`: program to solve the main task of the homework -  the killer Sudoku.(color constraint given)
+
+
+
 ## Reference
 ### Algorithm
 * Exact cover problem: https://www.geeksforgeeks.org/exact-cover-problem-algorithm-x-set-1/
