@@ -6,6 +6,12 @@ For the assignment specifications, please refer to <https://hackmd.io/6zxbedYCSL
 - Account: Team18@ada-judge.csie.ntu.edu.tw
 - Password: 0JnKWWxz5n
 
+### Notes
+* 可以用任何語言/package
+* 可以用多顆 CPU (??)
+* execution time is measured on the linux{1..4} workstations (??)
+* There is a time limit of 12 hours for the public tests combined (??)
+
 
 ### I/O
 *  job/ operation/slices 的 idx 從 1 開始，時間從 0 開始
@@ -33,9 +39,10 @@ For the assignment specifications, please refer to <https://hackmd.io/6zxbedYCSL
 1 7 0
 ``` 
 
-* Finishing time : 全部 jobs 都結束的時間點
-* Weighted total flow time: 每個 **job** 結束時間的 weighted sum
-* Metric to Optimize: Finishing time + Weighted total flow time
+* Makespan: 所有 jobs 都結束的時間點
+* Finishing time : 一個 job 的所有 operation 都結束的時間點
+* Weighted total flow time: 每個 **job** Finishing time 的 weighted sum
+* Metric to Optimize: Makespan + Weighted total flow time
 
 * output:
 ```
@@ -67,6 +74,3 @@ For the assignment specifications, please refer to <https://hackmd.io/6zxbedYCSL
 ```
 ./checker 00.in 00.out   //output the Metric
 ```
-
-
-
