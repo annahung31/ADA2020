@@ -7,7 +7,7 @@ For the assignment specifications, please refer to <https://hackmd.io/6zxbedYCSL
 - Password: 0JnKWWxz5n
 
 
-### Notes
+### I/O
 *  job/ operation/slices 的 idx 從 1 開始，時間從 0 開始
 
 * input:  
@@ -61,6 +61,12 @@ For the assignment specifications, please refer to <https://hackmd.io/6zxbedYCSL
 ![result](./img/1.jpg)
 
 
+
+### Checker
+* usage:  
+```
+./checker 00.in 00.out   //output the Metric
+```
 
 
 
