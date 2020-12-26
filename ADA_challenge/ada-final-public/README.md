@@ -35,6 +35,8 @@ For the assignment specifications, please refer to <https://hackmd.io/6zxbedYCSL
 
 * Finishing time : 全部 jobs 都結束的時間點
 * Weighted total flow time: 每個 **job** 結束時間的 weighted sum
+* Metric to Optimize: Finishing time + Weighted total flow time
+
 * output:
 ```
 0 1
@@ -56,7 +58,7 @@ For the assignment specifications, please refer to <https://hackmd.io/6zxbedYCSL
 // === 第三個 job ====
 5 2
 ```
-
+![result](./img/1.jpg)
 
 
 
