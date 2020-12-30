@@ -33,7 +33,7 @@ struct cage
 	int sum = 0, capacity = 0;
 	vector<int> cells;
 	vector< vector<int>> possible_divisions;
-    int possible_num[10];
+    
 };
 cage Cage[128];
 
@@ -57,9 +57,7 @@ vector< vector<int>> partitions(int target, int curr, int* array, int idx, int& 
 
         if (valid && a_set.size() == quota){
             possible_divisions.push_back(a_set);
-        }
-
-        // cout << endl;       
+        }  
         return possible_divisions;
     }
     else if (curr + array[idx] > target){
@@ -80,7 +78,6 @@ int block(int i, int j){
 }
 
 
-
 vector<int> cal_id(int i, int j, int num){
     int id_a, id_b, id_c, id_d, color, color_idx, id_cc;
     color = color_board[i][j];
@@ -95,16 +92,7 @@ vector<int> cal_id(int i, int j, int num){
     id_cc = A_RANGE + B_RANGE + C_RANGE + D_RANGE + 
             RANGE * (color_idx) + num - 1;
     
-
-    // cout << id_a+1 << "," << id_b+1 << "," << id_c+1 << "," << id_d+1 << "," << id_cc+1 << '\n';
-
     vector<int> dlxID{id_a+1, id_b+1, id_c+1, id_d+1, id_cc+1};  // +1 because DLX set start from 1
-
-    // display for debugging
-    // for (int i=0; i < dlxID.size(); i++){
-    //     cout << dlxID[i] << " ";
-    // }
-    // cout << "\n";
 
     return dlxID;
 
@@ -165,25 +153,12 @@ void add_complement(int& set_id){
                 vector<int> complement;
                 set_difference(all_num.begin(), all_num.end(), Cage[i].possible_divisions[j].begin(), Cage[i].possible_divisions[j].end(),
                     inserter(complement, complement.begin()));
-            
-                // display for debug
-                // for (int kk = 0; kk < Cage[i].possible_divisions[j].size(); kk++){
-                //     cout << Cage[i].possible_divisions[j][kk] << " ";
-                // }    
-                // cout << ": ";
-
-                // for (int kk = 0; kk < complement.size(); kk++){
-                //     cout << complement[kk] << " ";
-                // } 
-                // cout << "\n";
 
                 for (auto k : complement){
-                    // cout << k << " ";
                     int idx = A_RANGE + B_RANGE + C_RANGE + D_RANGE + 
                                 RANGE * (color_idx) + k - 1;
                     dlxID.push_back(idx+1);
                 }
-                // cout << "\n";
                 moves[set_id][2] = -1; //flag for print_board to know
                 AddRow(set_id, dlxID);
                 set_id++;   
@@ -259,42 +234,19 @@ int main(){
             for (int k = 0; k < Cage[i].possible_divisions.size(); k++){
                 for (int t = 0; t < Cage[i].possible_divisions[k].size(); t++){
                     int num = Cage[i].possible_divisions[k][t];
+
                     
-                    Cage[i].possible_num[num] = 1;
                 }                    
             }
-
-            
-
-            // cout << char(i) << ":";
-            // for (int kk = 1; kk < 10; kk++){
-                
-            //     cout << Cage[i].possible_num[kk] << " ";
-            // }
-            // cout << "\n";
         }
     }
-
-
 
     // build sparse matrix
     int sz;
     sz = A_RANGE + B_RANGE + C_RANGE + D_RANGE + num_color * RANGE;
 
     Init(sz);      
-
     build_matrix();
-
-    //display range
-    // cout << "| 1 ---" << A_RANGE << " | ";
-    // cout << A_RANGE + 1 << " --- " << A_RANGE + B_RANGE << " | ";
-    // cout << A_RANGE + B_RANGE + 1 << " --- " << A_RANGE + B_RANGE + C_RANGE << "|";
-    // cout << A_RANGE + B_RANGE + C_RANGE + 1 << " --- " << A_RANGE + B_RANGE + C_RANGE + D_RANGE << "|";
-    // cout << A_RANGE + B_RANGE + C_RANGE + D_RANGE + 1 << " --- " << A_RANGE + B_RANGE + C_RANGE + D_RANGE + num_color * RANGE << "|";
-    // cout << "\n";
-
-
-
 
     // solve
     vector<int> ans;
@@ -302,16 +254,6 @@ int main(){
 
     //display result
     print_board(ans);
-
-
-
-    // cout << ans.size() << "\n";
-    // for (int i=0; i < ans.size(); i++){
-    //     cout << ans[i] << " ";
-    // }
-    // cout << "\n";
-
-
     return 0;
 }
 
