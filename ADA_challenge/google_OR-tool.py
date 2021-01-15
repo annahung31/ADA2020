@@ -4,6 +4,8 @@ import collections
 from ortools.sat.python import cp_model
 
 
+    
+
 def MinimalJobshopSat(jobs_data, same_job, n_jobs, n_tasks, machines_count):
     """Minimal jobshop problem."""
     # Create the model.
@@ -14,9 +16,7 @@ def MinimalJobshopSat(jobs_data, same_job, n_jobs, n_tasks, machines_count):
     
 
     for i_job, job in enumerate(jobs_data):
-        print(i_job)
         for j_task, task in enumerate(job):
-            print(j_task)
             task_machine_id[i_job][j_task] += str(task[0]+1)
             
 
@@ -98,8 +98,6 @@ def MinimalJobshopSat(jobs_data, same_job, n_jobs, n_tasks, machines_count):
         # Create per machine output lines.
         output = ''
 
-        n_tasks = 3
-        n_jobs = 3
         task_st = [[0 for i in range(n_tasks)] for j in range(n_jobs)]
         
         for machine in all_machines:
