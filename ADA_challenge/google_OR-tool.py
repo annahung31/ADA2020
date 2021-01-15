@@ -4,33 +4,23 @@ import collections
 from ortools.sat.python import cp_model
 
 
-def MinimalJobshopSat():
+def MinimalJobshopSat(jobs_data, same_job, n_jobs, n_tasks, machines_count):
     """Minimal jobshop problem."""
     # Create the model.
     model = cp_model.CpModel()
 
-    # jobs_data = [  # task = (machine_id, processing_time).
-    #     [(0, 3), (1, 2), (2, 2)],  # Job0
-    #     [(0, 2), (2, 1), (1, 4)],  # Job1
-    #     [(1, 4), (2, 3)]  # Job2
-    # ]
 
-    jobs_data = [  # task = (machine_id, processing_time).
-            [(0, 10,-1), (0, 5, 0), (2, 7, 0)],  # Job0
-            [(1, 5, -1), (2, 5, -1)],  # Job1
-            [(1, 7, -1)]  # Job2
-        ]
-
-    n_jobs = 3
-    n_tasks = 3
     task_machine_id = [['' for i in range(n_tasks)] for j in range(n_jobs)]
     
+
     for i_job, job in enumerate(jobs_data):
+        print(i_job)
         for j_task, task in enumerate(job):
+            print(j_task)
             task_machine_id[i_job][j_task] += str(task[0]+1)
             
 
-    machines_count = 3
+    
     all_machines = range(machines_count)
 
     # Computes horizon dynamically as the sum of all durations.
@@ -69,8 +59,15 @@ def MinimalJobshopSat():
             dependency = jobs_data[job_id][task_id][2]
             if (dependency != -1):
                 model.Add(all_tasks[job_id, task_id].start >= all_tasks[job_id, dependency].end)
+    
 
+    # same operation needs two machine -> needs to be start at the same time
 
+    for a_set in same_job:
+        idx = 0
+        while idx+1 != len(a_set):
+            model.Add(all_tasks[a_set[idx][0], a_set[idx][1]].start == all_tasks[a_set[idx+1][0], a_set[idx+1][1]].start)
+            idx += 1
 
     # Makespan objective.
     obj_var = model.NewIntVar(0, horizon, 'makespan')
@@ -119,7 +116,6 @@ def MinimalJobshopSat():
                 sol_line_tasks += '%-10s' % name
 
                 start = assigned_task.start
-                print("job ", assigned_task.job, " task: ", assigned_task.index, int(start))
                 task_st[assigned_task.job][assigned_task.index] = int(start)
 
                 duration = assigned_task.duration
@@ -133,10 +129,8 @@ def MinimalJobshopSat():
             output += sol_line
 
         # Finally print the solution found.
-        print('Optimal Schedule Length: %i' % solver.ObjectiveValue())
-        print(output)
-
-        
+        # print('Optimal Schedule Length: %i' % solver.ObjectiveValue())
+        # print(output)
 
 
         for i in range(n_jobs):
@@ -144,6 +138,26 @@ def MinimalJobshopSat():
                 if (task_machine_id[i][j] != ''):
                     print(str(task_st[i][j]) + " " + task_machine_id[i][j])
             
+        with open("00.out", "w") as f:
+            for i in range(n_jobs):
+                for j in range(n_tasks):
+                    if (task_machine_id[i][j] != ''):
+                        f.writelines(str(task_st[i][j]) + " " + task_machine_id[i][j]+ "\n")
 
 
-MinimalJobshopSat()
+
+if __name__ == "__main__":
+
+    n_jobs = 3
+    n_tasks = 3
+    machines_count = 3
+    jobs_data = [  # task = (machine_id, processing_time, dependency, op_id).
+            [(0, 10,-1), (0, 5, 0), (2, 7, 0)],  # Job0
+            [(1, 5, -1), (2, 5, -1)],  # Job1
+            [(2, 7, -1)]  # Job2
+        ]
+    same_job = [[(1,0),(1,1)]]
+
+
+           
+    MinimalJobshopSat(jobs_data, same_job, n_jobs, n_tasks, machines_count)
