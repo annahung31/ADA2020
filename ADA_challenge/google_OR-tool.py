@@ -21,7 +21,14 @@ def MinimalJobshopSat():
             [(1, 7, -1)]  # Job2
         ]
 
+    n_jobs = 3
+    n_tasks = 3
+    task_machine_id = [['' for i in range(n_tasks)] for j in range(n_jobs)]
     
+    for i_job, job in enumerate(jobs_data):
+        for j_task, task in enumerate(job):
+            task_machine_id[i_job][j_task] += str(task[0]+1)
+            
 
     machines_count = 3
     all_machines = range(machines_count)
@@ -94,6 +101,10 @@ def MinimalJobshopSat():
         # Create per machine output lines.
         output = ''
 
+        n_tasks = 3
+        n_jobs = 3
+        task_st = [[0 for i in range(n_tasks)] for j in range(n_jobs)]
+        
         for machine in all_machines:
             # Sort by starting time.
             assigned_jobs[machine].sort()
@@ -102,10 +113,15 @@ def MinimalJobshopSat():
 
             for assigned_task in assigned_jobs[machine]:
                 name = 'job_%i_%i' % (assigned_task.job, assigned_task.index)
+
+
                 # Add spaces to output to align columns.
                 sol_line_tasks += '%-10s' % name
 
                 start = assigned_task.start
+                print("job ", assigned_task.job, " task: ", assigned_task.index, int(start))
+                task_st[assigned_task.job][assigned_task.index] = int(start)
+
                 duration = assigned_task.duration
                 sol_tmp = '[%i,%i]' % (start, start + duration)
                 # Add spaces to output to align columns.
@@ -119,6 +135,15 @@ def MinimalJobshopSat():
         # Finally print the solution found.
         print('Optimal Schedule Length: %i' % solver.ObjectiveValue())
         print(output)
+
+        
+
+
+        for i in range(n_jobs):
+            for j in range(n_tasks):
+                if (task_machine_id[i][j] != ''):
+                    print(str(task_st[i][j]) + " " + task_machine_id[i][j])
+            
 
 
 MinimalJobshopSat()
